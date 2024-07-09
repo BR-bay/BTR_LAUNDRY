@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BTR Laundry</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-xjNe6eit4pmKFH6cUcHqyZS1y/Un0P4PeCe4x1DwAW0IzGp1+IVeW59VbnXpZwekUhMamC4jHx9VY5Ym4+lxFA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="BTR Laundry">
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="#services"><i class="fas fa-concierge-bell"></i> Services</a></li>
+        <li><a href="#order"><i class="fas fa-shopping-cart"></i> Order</a></li>
+        <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        <li><a href="https://www.instagram.com/tmademy_?igsh=OGpqYnQ1dnFhampy" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+        <li><a href="https://m.facebook.com/ryan.r.hidayah/" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <section id="home">
+    <div class="content">
+      <h1>Welcome to BTR Laundry</h1>
+      <p>Your trusted laundry service provider.</p>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="content">
+      <h2>Our Services</h2>
+      <div class="service-grid">
+        <div class="service-item" onclick="showServiceItems('cuci_basah')">
+          <img src="cuci_basah.jpg" alt="Cuci Basah">
+          <p>Cuci Basah</p>
+        </div>
+        <div class="service-item" onclick="showServiceItems('premium_wash')">
+          <img src="premium_wash.jpg" alt="Premium Wash">
+          <p>Premium Wash</p>
+        </div>
+        <div class="service-item" onclick="showServiceItems('dry_cleaning')">
+          <img src="dry_cleaning.jpg" alt="Dry Cleaning">
+          <p>Dry Cleaning</p>
+        </div>
+        <div class="service-item" onclick="showServiceItems('setrika')">
+          <img src="setrika.jpg" alt="Setrika">
+          <p>Setrika</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="order">
+    <div class="content">
+      <h2>Place Your Order</h2>
+      <form id="order-form" onsubmit="submitOrder(); return false;">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" required><br><br>
+        <label for="service">Select Service:</label>
+        <select id="service" name="service">
+          <option value="cuci_basah">Cuci Basah</option>
+          <option value="dry_cleaning">Dry Cleaning</option>
+          <option value="premium_wash">Premium Wash</option>
+          <option value="setrika">Setrika</option>
+        </select><br><br>
+        <div id="order-items"></div>
+        <button type="submit">Submit Order</button>
+        <button type="button" onclick="printOrder()">Print Order</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="order-history">
+    <div class="content">
+      <h2>Order History</h2>
+      <form id="history-form" onsubmit="fetchOrderHistory(); return false;">
+        <label for="phone-history">Enter your phone number to check order history:</label>
+        <input type="text" id="phone-history" name="phone-history" required>
+        <button type="submit">Check History</button>
+      </form>
+      <div id="order-history-list"></div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="content">
+      <h2>Contact Us</h2>
+      <p>For inquiries and support, please contact us at:</p>
+      <address>
+        Email: info@btrlaundry.com<br>
+        Phone: +62 85212637719<br>
+        Address: Purwodadi Ujung No.53, Pekanbaru
+      </address>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 BTR Laundry. All rights reserved.</p>
+  </footer>
+
+  <!-- Overlay for service items -->
+  <div id="overlay" class="overlay" onclick="hideOverlay()">
+    <div class="overlay-content" onclick="event.stopPropagation()">
+      <span class="close-btn" onclick="hideOverlay()">&times;</span>
+      <h3 id="service-name"></h3>
+      <div id="service-items"></div>
+      <button onclick="addToOrder()">Add to Order</button>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    const services = {
+      cuci_basah: [
+        { name: 'Kaos', price: 9000, image: 'kaos.jpg' },
+        { name: 'Jeans', price: 8000, image: 'jeans.jpg' },
+        { name: 'Jaket', price: 10000, image: 'jaket.jpg' },
+        { name: 'Bed Cover', price: 70000, image: 'Bed_Cover.jpg' },
+        { name: 'Karpet', price: 250000, image: 'Karpet.jpg' }
+      ],
+      premium_wash: [
+        { name: 'Kaos', price: 9000, image: 'kaos.jpg' },
+        { name: 'Jeans', price: 8000, image: 'jeans.jpg' },
+        { name: 'Jaket', price: 10000, image: 'jaket.jpg' },
+        { name: 'Bed Cover', price: 70000, image: 'Bed_Cover.jpg' },
+        { name: 'Karpet', price: 250000, image: 'Karpet.jpg' }
+      ],
+      dry_cleaning: [
+        { name: 'Kaos', price: 9000, image: 'kaos.jpg' },
+        { name: 'Jeans', price: 8000, image: 'jeans.jpg' },
+        { name: 'Jaket', price: 10000, image: 'jaket.jpg' },
+        { name: 'Bed Cover', price: 70000, image: 'Bed_Cover.jpg' },
+        { name: 'Karpet', price: 250000, image: 'Karpet.jpg' }
+      ],
+      setrika: [
+        { name: 'Kaos', price: 9000, image: 'kaos.jpg' },
+        { name: 'Jeans', price: 8000, image: 'jeans.jpg' },
+        { name: 'Jaket', price: 10000, image: 'jaket.jpg' }
+      ]
+    };
+
+    let selectedItems = [];
+
+    function showServiceItems(service) {
+      document.getElementById("service-name").textContent = service.replace(/_/g, ' ');
+      const serviceItemsDiv = document.getElementById("service-items");
+      serviceItemsDiv.innerHTML = '';
+
+      services[service].forEach(item => {
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("item");
+        itemDiv.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <p>${item.name} - Rp. ${item.price}</p>
+          <div class="quantity-control">
+            <button onclick="changeQuantity('${item.name}', ${item.price}, -1)">-</button>
+            <span id="${item.name.replace(/\s+/g, '_')}_quantity">0</span>
+            <button onclick="changeQuantity('${item.name}', ${item.price}, 1)">+</button>
+          </div>
+        `;
+        serviceItemsDiv.appendChild(itemDiv);
+      });
+
+      document.getElementById("overlay").style.display = "flex";
+    }
+
+    function hideOverlay() {
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    function changeQuantity(name, price, delta) {
+      let item = selectedItems.find(item => item.name === name);
+      if (item) {
+        item.quantity += delta;
+        if (item.quantity <= 0) {
+          selectedItems = selectedItems.filter(i => i.name !== name);
+          item = null;
+        }
+      } else if (delta > 0) {
+        item = { name, price, quantity: 1 };
+        selectedItems.push(item);
+      }
+      document.getElementById(`${name.replace(/\s+/g, '_')}_quantity`).textContent = item ? item.quantity : 0;
+    }
+
+    function addToOrder() {
+      const orderItemsDiv = document.getElementById("order-items");
+      orderItemsDiv.innerHTML = '';
+
+      selectedItems.forEach(item => {
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("order-item");
+        itemDiv.innerHTML = `
+          <p>${item.name} x ${item.quantity} - Rp. ${item.price * item.quantity}</p>
+        `;
+        orderItemsDiv.appendChild(itemDiv);
+      });
+
+      hideOverlay();
+    }
+
+    function submitOrder() {
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const service = document.getElementById("service").value;
+
+      if (selectedItems.length === 0) {
+        alert("Please select at least one item.");
+        return false;
+      }
+
+      // Buat pesan WhatsApp
+      let orderSummary = `Order from ${name} (${phone}):\nService: ${service}\n`;
+      let totalAmount = 0;
+      selectedItems.forEach(item => {
+        orderSummary += `${item.name} x ${item.quantity} - Rp. ${item.price * item.quantity}\n`;
+        totalAmount += item.price * item.quantity;
+      });
+      orderSummary += `Total: Rp. ${totalAmount}\n`;
+      
+      // Nomor WhatsApp tujuan
+      const phoneNumber = "6285212637719"; // Ganti dengan nomor WhatsApp Anda
+      const encodedMessage = encodeURIComponent(orderSummary);
+      const waLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+      // Buka WhatsApp
+      window.open(waLink, '_blank');
+
+      // Simpan pesanan ke database
+      saveOrderToDatabase(name, phone, service, selectedItems);
+
+      // Reset pesanan
+      selectedItems = [];
+      document.getElementById("order-items").innerHTML = '';
+      document.getElementById("order-form").reset();
+      return false; // Mencegah form submission
+    }
+
+    function saveOrderToDatabase(name, phone, service, items) {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "save_order.php", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log(xhr.responseText);
+        }
+      };
+      const data = {
+        name: name,
+        phone: phone,
+        service: service,
+        items: items
+      };
+      xhr.send(JSON.stringify(data));
+    }
+
+    function printOrder() {
+      if (selectedItems.length === 0) {
+        alert("Please select at least one item to print the order.");
+        return;
+      }
+
+      let orderSummary = "Order Summary:\n";
+      selectedItems.forEach(item => {
+        orderSummary += `${item.name} x ${item.quantity} - Rp. ${item.price * item.quantity}\n`;
+      });
+
+      alert(orderSummary);
+    }
+
+    function fetchOrderHistory() {
+      const phone = document.getElementById("phone-history").value;
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", `fetch_order_history.php?phone=${phone}`, true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          const history = JSON.parse(xhr.responseText);
+          const historyListDiv = document.getElementById("order-history-list");
+          historyListDiv.innerHTML = '<h3>Order History:</h3>';
+          history.forEach(order => {
+            const orderDiv = document.createElement("div");
+            orderDiv.classList.add("order-history-item");
+            orderDiv.innerHTML = `
+              <p>${order.date} - ${order.service} - ${order.items}</p>
+            `;
+            historyListDiv.appendChild(orderDiv);
+          });
+        }
+      };
+      xhr.send();
+    }
+  </script>
+</body>
+</html>
